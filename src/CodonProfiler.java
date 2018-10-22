@@ -16,6 +16,9 @@ public class CodonProfiler {
 		HashMap<String,Integer> map = new HashMap<>();
 		int[] ret = new int[codons.length];
 		Iterator<Character> iter = strand.iterator();
+		if (strand.size()<3) {
+			return null;
+		}
 		while (iter.hasNext()) {
 			char a = iter.next();
 			char b = 'z';           // not part of any real codon
@@ -32,8 +35,14 @@ public class CodonProfiler {
 			}
 			map.put(cod,map.get(cod)+1);
 		}
+
 		for (int i=0; i<codons.length; i++) {
+			if(map.containsKey(codons[i])) {
 			ret[i]=map.get(codons[i]);
+			}
+			else {
+				ret[i]=0;
+			}
 		}
 		return ret;
 	}
