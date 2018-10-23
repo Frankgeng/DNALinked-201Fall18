@@ -68,7 +68,9 @@ public class LinkStrand implements IDnaStrand{
 		   StringBuilder last = new StringBuilder(myLast.info);
 		   last.reverse();
 		   LinkStrand listStrand=new LinkStrand(last.toString());
-		   Node newLast=new Node(myFirst.info);
+		   StringBuilder nlast = new StringBuilder(myFirst.info);
+		   nlast.reverse();
+		   Node newLast=new Node(nlast.toString());
 		   Node newFirst=newLast;
 		   Node n=myFirst.next;
 		   while (n!=null) {
