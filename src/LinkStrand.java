@@ -66,13 +66,15 @@ public class LinkStrand implements IDnaStrand{
 	   public IDnaStrand reverse() {
 		   //StringBuilder copy = new StringBuilder("");
 		   StringBuilder last = new StringBuilder(myLast.info);
-		   LinkStrand listStrand=new LinkStrand(last.reverse().toString());
+		   last.reverse();
+		   LinkStrand listStrand=new LinkStrand(last.toString());
 		   Node newLast=new Node(myFirst.info);
 		   Node newFirst=newLast;
 		   Node n=myFirst.next;
 		   while (n!=null) {
 			   StringBuilder s=new StringBuilder(n.info);
-			   Node x=new Node(s.reverse().toString());
+			   s.reverse();
+			   Node x=new Node(s.toString());
 			   x.next=newFirst;
 			   newFirst=x;
 			   n=n.next;
