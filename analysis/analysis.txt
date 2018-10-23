@@ -11,6 +11,36 @@ Note that the value of b is half the number of calls to append since each cut (e
 is modeled by two calls of append in the method cutAndSplice -- see the code. This means that 
 b2 will be constant in the benchmark, but S will vary. 
 
+Results:
+dna length = 4,639,221
+cutting at enzyme gaattc
+-----
+Class	                splicee	      recomb	time	appends
+-----
+StringStrand:	            256	      4,800,471	0.721	1290
+StringStrand:	            512	      4,965,591	0.714	1290
+StringStrand:	          1,024	      5,295,831	0.985	1290
+StringStrand:	          2,048	      5,956,311	1.193	1290
+StringStrand:	          4,096	      7,277,271	1.465	1290
+StringStrand:	          8,192	      9,919,191	2.164	1290
+StringStrand:	         16,384	     15,203,031	3.135	1290
+StringStrand:	         32,768	     25,770,711	5.487	1290
+StringStrand:	         65,536	     46,906,071	9.908	1290
+StringStrand:	        131,072	     89,176,791	19.668	1290
+StringStrand:	        262,144	    173,718,231	37.140	1290
+StringStrand:	        524,288	    342,801,111	63.575	1290
+StringStrand:	      1,048,576	    680,966,871	135.914	1290
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at StringStrand.append(StringStrand.java:70)
+	at IDnaStrand.cutAndSplice(IDnaStrand.java:41)
+	at DNABenchmark.strandSpliceBenchmark(DNABenchmark.java:67)
+	at DNABenchmark.main(DNABenchmark.java:113)
+
+As b is constant here (precisely 1290/2=645), O(b2S) will only vary with S, which is length of splicee. We can see that for splicee with large number
+after 8192, as S doubles, run time also roughly doubles, which verifies O(b2S). But for splicee with relative smaller number,
+run time doesn't change much.
+
+
 Question 2: are the benchmark timings for StringBuilderStrand consistent with the explanation 
 below that the time to execute cutAndSplice is O(bS)? 
 
@@ -18,6 +48,79 @@ Note that the value of b is half the number of calls to append since each cut (e
 is modeled by two calls of append in the method cutAndSplice -- see the code. This means that 
 b will be constant in the benchmark, but S will vary. 
 
+Results:
+dna length = 4,639,221
+cutting at enzyme gaattc
+-----
+Class	                splicee	      recomb	time	appends
+-----
+StringBuilderStrand:	            256	      4,800,471	0.035	1290
+StringBuilderStrand:	            512	      4,965,591	0.021	1290
+StringBuilderStrand:	          1,024	      5,295,831	0.009	1290
+StringBuilderStrand:	          2,048	      5,956,311	0.012	1290
+StringBuilderStrand:	          4,096	      7,277,271	0.010	1290
+StringBuilderStrand:	          8,192	      9,919,191	0.016	1290
+StringBuilderStrand:	         16,384	     15,203,031	0.015	1290
+StringBuilderStrand:	         32,768	     25,770,711	0.030	1290
+StringBuilderStrand:	         65,536	     46,906,071	0.089	1290
+StringBuilderStrand:	        131,072	     89,176,791	0.179	1290
+StringBuilderStrand:	        262,144	    173,718,231	0.245	1290
+StringBuilderStrand:	        524,288	    342,801,111	0.299	1290
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Unknown Source)
+	at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(Unknown Source)
+	at java.base/java.lang.AbstractStringBuilder.append(Unknown Source)
+	at java.base/java.lang.StringBuilder.append(Unknown Source)
+	at StringBuilderStrand.append(StringBuilderStrand.java:70) 
+	at IDnaStrand.cutAndSplice(IDnaStrand.java:41)
+	at DNABenchmark.strandSpliceBenchmark(DNABenchmark.java:67)
+	at DNABenchmark.main(DNABenchmark.java:113)
+
+We can see that for splicee with relatively large number, run time increases with length of splicee, which is S, although 
+not linearly. That might because of other system errors. But we can see runtime in this case is much smaller than the 
+StringStrand class. That is because of b2 in O(b2S), while here it's only b in O(bS). 
+
 Question 3: Explain why the time for LinkStrand does not change much at all over all the runs 
 in the benchmark program. Explain why you think memory is exhausted at the specific strand 
 size you see in your timings -- as compared to exhaustion for String and StringBuilder.
+
+Results:
+dna length = 4,639,221
+cutting at enzyme gaattc
+-----
+Class	                splicee	      recomb	time	appends
+-----
+LinkStrand:	            256	      4,800,471	0.085	1290
+LinkStrand:	            512	      4,965,591	0.031	1290
+LinkStrand:	          1,024	      5,295,831	0.005	1290
+LinkStrand:	          2,048	      5,956,311	0.007	1290
+LinkStrand:	          4,096	      7,277,271	0.008	1290
+LinkStrand:	          8,192	      9,919,191	0.006	1290
+LinkStrand:	         16,384	     15,203,031	0.005	1290
+LinkStrand:	         32,768	     25,770,711	0.006	1290
+LinkStrand:	         65,536	     46,906,071	0.008	1290
+LinkStrand:	        131,072	     89,176,791	0.007	1290
+LinkStrand:	        262,144	    173,718,231	0.005	1290
+LinkStrand:	        524,288	    342,801,111	0.007	1290
+LinkStrand:	      1,048,576	    680,966,871	0.009	1290
+LinkStrand:	      2,097,152	  1,357,298,391	0.010	1290
+LinkStrand:	      4,194,304	  2,709,961,431	0.014	1290
+LinkStrand:	      8,388,608	  5,415,287,511	0.013	1290
+LinkStrand:	     16,777,216	 10,825,939,671	0.006	1290
+LinkStrand:	     33,554,432	 21,647,243,991	0.013	1290
+LinkStrand:	     67,108,864	 43,289,852,631	0.011	1290
+LinkStrand:	    134,217,728	 86,575,069,911	0.008	1290
+LinkStrand:	    268,435,456	173,145,504,471	0.007	1290
+LinkStrand:	    536,870,912	346,286,373,591	0.009	1290
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Unknown Source)
+	at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(Unknown Source)
+	at java.base/java.lang.AbstractStringBuilder.append(Unknown Source)
+	at java.base/java.lang.StringBuilder.append(Unknown Source)
+	at DNABenchmark.main(DNABenchmark.java:110)
+
+Because when the program substitutes the splicee for the enzyme in LinkStrand class, it simply changes the 
+next reference of the node, which is of O(1), much smaller than the other two classes, which are O(a+b) and 
+O(b) respectively. That's why runtime does not change. For the second question, because the LinkStrand class only creates one node for the splicee
+instead of creating a new String every time substitution happens, this reduces memory consumption. So LinkStrand can have larger splicee until memory
+runs out.
